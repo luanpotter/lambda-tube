@@ -1,0 +1,32 @@
+{
+  "name": "lambda-tube",
+  "version": "0.1.0",
+  "description": "This project has no purpose whatsoever",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "claudia-local-api --api-module main",
+    "deploy": "claudia update --profile claudia --set-env-from-json config.json",
+    "re-deploy": "claudia create --profile claudia --set-env-from-json config.json --region us-east-2 --api-module main --timeout 300"
+  },
+  "keywords": [
+    "youtube",
+    "server",
+    "node"
+  ],
+  "author": "Luan Nico",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.400.0",
+    "cheerio": "^1.0.0-rc.2",
+    "claudia-api-builder": "^4.1.2",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "uuid": "^3.3.2",
+    "ytdl-core": "^0.29.1"
+  },
+  "devDependencies": {
+    "claudia": "^5.4.0",
+    "claudia-local-api": "^2.0.0"
+  }
+}
