@@ -8,7 +8,7 @@ const $ = require('cheerio');
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 
-const { S3_BUCKET, SERVER_URL, LAMBDA_URL, LAMBDA_NAME, LAMBDA_PROTOCOL } = require('./env.js');
+const { S3_BUCKET, SERVER_URL, LAMBDA_URL, LAMBDA_NAME, LAMBDA_PROTOCOL, DOWNLOAD_URL } = require('./env.js');
 
 const queryUrl = param => `${SERVER_URL}/results?search_query=${encodeURIComponent(param)}`;
 
@@ -53,7 +53,7 @@ const download = async id => {
     console.log(`Finisehd, uuid: ${uuid}, data: ${JSON.stringify(params)}`);
   });
 
-  return { downloadId: uuid };
+  return { downloadId: uuid, downloadUrl: `${DOWNLOAD_URL}/file-${uuid}` };
 };
 
 const tryHead = async file => {
