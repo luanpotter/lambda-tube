@@ -58,7 +58,7 @@ const download = async id => {
 
 const tryHead = async file => {
   const params = {
-    Bucket: BUCKET,
+    Bucket: S3_BUCKET,
     Key: file,
   };
 
