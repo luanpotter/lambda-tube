@@ -5,10 +5,11 @@ const { WELCOME_MESSAGE, SECRET } = require('./env.js');
 const { details, query, download, status } = require('./impl.js');
 
 app.intercept(req => {
-    if (req.headers['Secret'] !== SECRET) {
-        console.log(`Header Secret, value ${SECRET}`);
-        return new ApiBuilder.ApiResponse('You must provide the correct secret.', {'Content-Type': 'text/plain'}, 403);
+    if (req.headers['Secret'] === SECRET) {
+        return req;
     }
+    console.log(`Header Secret, value ${SECRET}`);
+    return new ApiBuilder.ApiResponse('You must provide the correct secret.', {'Content-Type': 'text/plain'}, 403);
 });
 
 app.get('/', () => ({ message: WELCOME_MESSAGE }));
