@@ -6,7 +6,8 @@ const { details, query, download, status } = require('./impl.js');
 
 app.intercept(req => {
     if (req.headers['Secret'] !== SECRET) {
-        throw 'You must provide the Secret, sorry...';
+        console.log(`Header Secret, value ${SECRET}`);
+        return new ApiBuilder.ApiResponse('You must provide the correct secret.', {'Content-Type': 'text/plain'}, 403);
     }
 });
 
