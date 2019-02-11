@@ -1,5 +1,3 @@
-const stream = require('stream');
-const ytdl = require('ytdl-core');
 const uuidv4 = require('uuid/v4');
 
 const rp = require('request-promise');
@@ -9,6 +7,16 @@ const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 
 const { S3_BUCKET, SERVER_URL, LAMBDA_URL, LAMBDA_NAME, LAMBDA_PROTOCOL, DOWNLOAD_URL } = require('./env.js');
+
+const invokeLambda = args => {
+  const lambda = new AWS.Lambda();
+  const params = {
+    FunctionName: 'lambda-tube-downloader',
+    InvocationType: 'Event',
+    Payload: JSON.stringify(args),
+  };
+  return lambda.invoke(params).promise();
+};
 
 const queryUrl = param => `${SERVER_URL}/results?search_query=${encodeURIComponent(param)}`;
 
@@ -34,24 +42,18 @@ const query = async q => {
 
 const s3Upload = ({ fileName, fileContent }) => s3.upload({ Bucket: S3_BUCKET, Key: fileName, Body: fileContent, ACL: 'public-read' }).promise();
 
-const uploadStream = fileName => {
-  const pass = new stream.PassThrough();
-  return {
-    stream: pass,
-    promise: s3Upload({ fileName, fileContent: pass }),
-  };
-};
-
 const download = async id => {
   const uuid = uuidv4();
-  const videoID = `${SERVER_URL}/watch?v=${id}`;
+  const videoUrl = `${SERVER_URL}/watch?v=${id}`;
+
   await s3Upload({ fileName: `touch-${uuid}`, fileContent: 'pending' });
 
-  const { stream, promise } = uploadStream(`file-${uuid}`);
-  ytdl(videoID, { quality: 'highestaudio', filter: 'audioonly' }).pipe(stream);
-  promise.then(params => {
-    console.log(`Finisehd, uuid: ${uuid}, data: ${JSON.stringify(params)}`);
+  const result = await invokeLambda({
+    bucket: S3_BUCKET,
+    videoUrl,
+    uuid,
   });
+  console.log(result);
 
   return { downloadId: uuid, downloadUrl: `${DOWNLOAD_URL}/file-${uuid}` };
 };

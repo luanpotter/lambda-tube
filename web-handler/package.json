@@ -22,8 +22,7 @@
     "claudia-api-builder": "^4.1.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "uuid": "^3.3.2",
-    "ytdl-core": "^0.29.1"
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "claudia": "^5.4.0",

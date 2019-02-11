@@ -1,0 +1,13 @@
+{
+  "name": "lambda-tube-downloader",
+  "version": "0.1.0",
+  "description": "This project has no purpose whatsoever",
+  "main": "main.js",
+  "author": "Luan Nico",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.400.0",
+    "ytdl-core": "^0.29.1"
+  }
+}
