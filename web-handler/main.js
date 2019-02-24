@@ -5,7 +5,7 @@ const { WELCOME_MESSAGE, SECRET } = require('./env.js');
 const { details, query, download, status } = require('./impl.js');
 
 app.intercept(req => {
-    if (req.headers['Secret'] === SECRET) {
+    if (req.headers['secret'] === SECRET) {
         return req;
     }
     console.log(`Header Secret, value ${SECRET}`);
