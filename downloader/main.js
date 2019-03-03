@@ -4,19 +4,24 @@ const ytdl = require('ytdl-core');
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 
+const { ffmpeg } = require('./ffmpeg.js');
+
 const s3Upload = ({ bucket, fileName, fileContent }) => s3.upload({ Bucket: bucket, Key: fileName, Body: fileContent, ACL: 'public-read' }).promise();
 
 const uploadStream = ({ bucket, fileName }) => {
     const pass = new stream.PassThrough();
     return {
-        stream: pass,
+        s3Stream: pass,
         promise: s3Upload({ bucket, fileName, fileContent: pass }),
     };
 };
 
 const download = async ({ bucket, videoUrl, uuid }) => {
-    const { stream, promise } = uploadStream({ bucket, fileName: `file-${uuid}` });
-    ytdl(videoUrl, { quality: 'highestaudio', filter: 'audioonly' }).pipe(stream);
+    const { s3Stream, promise } = uploadStream({ bucket, fileName: `file-${uuid}` });
+
+    const ytdlStream = ytdl(videoUrl, { quality: 'highestaudio', filter: 'audioonly' });
+    ffmpeg(ytdlStream).inputFormat('webm').noVideo().outputFormat('mp3').writeToStream(s3Stream);
+
     const result = await promise;
     return `Finisehd, uuid: ${uuid}, data: ${JSON.stringify(result)}`;
 };
@@ -28,3 +33,5 @@ exports.handler = async (payload) => {
     console.log(response);
     return response;
 };
+
+download({ bucket: 'foobar', videoUrl: 'https://www.youtube.com/watch?v=vt1Pwfnh5pc', uuid: 'file-name' });
