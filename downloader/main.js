@@ -33,5 +33,3 @@ exports.handler = async (payload) => {
     console.log(response);
     return response;
 };
-
-download({ bucket: 'foobar', videoUrl: 'https://www.youtube.com/watch?v=vt1Pwfnh5pc', uuid: 'file-name' });
